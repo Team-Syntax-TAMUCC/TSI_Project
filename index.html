@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TSI Readiness Dashboard</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <h1>TSI Readiness Dashboard</h1>
+    <label for="searchInput">Enter Student Name:</label>
+    <input type="text" id="searchInput" placeholder="Search by name..." onkeyup="searchStudent()">
+    
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>ID</th>
+                <th>TSI Category</th>
+                <th>Status</th>
+                <th>Guidance</th>
+            </tr>
+        </thead>
+        <tbody id="studentTableBody">
+            <!-- Data will be inserted here dynamically -->
+        </tbody>
+    </table>
+
+    <script>
+        let studentsData = [];
+
+        fetch('students.json')
+            .then(response => response.json())
+            .then(data => {
+                studentsData = data.students;
+                displayStudents(studentsData);
+            })
+            .catch(error => console.error('Error loading data:', error));
+
+        function displayStudents(students) {
+            const tableBody = document.getElementById('studentTableBody');
+            tableBody.innerHTML = "";
+            students.forEach(student => {
+                const row = document.createElement('tr');
+                row.innerHTML = `<td>${student.name}</td>
+                                 <td>${student.id}</td>
+                                 <td>${student.tsi_category}</td>
+                                 <td>${student.status}</td>
+                                 <td>${student.guidance}</td>`;
+                tableBody.appendChild(row);
+            });
+        }
+
+        function searchStudent() {
+            const searchValue = document.getElementById('searchInput').value.toLowerCase();
+            const filteredStudents = studentsData.filter(student => 
+                student.name.toLowerCase().includes(searchValue)
+            );
+            displayStudents(filteredStudents);
+        }
+    </script>
+</body>
+</html>
